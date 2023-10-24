@@ -38,9 +38,23 @@ class ScanCommand(commands.Cog):
 
     @hunters.command(guild=1158643397574279168, description="Add a hunter")
     async def report(self, ctx: discord.ApplicationContext, hunter: discord.SlashCommandOptionType.string):
-        user = self.bot.get_user(1122051453431840818)
-        embed = discord.Embed(title="Add Hunter?", color=discord.Colour.blurple(), description=f"Should player {hunter} be added to the hunter list?")
-        await user.send(embed=embed)
+        if self.bot.is_owner(ctx.author):
+            config.Storage.add_hunter(hunter=hunter)
+            await ctx.respond("Added Hunter")
+        else:
+            user = self.bot.get_user(1122051453431840818)
+            embed = discord.Embed(title="Add Hunter?", color=discord.Colour.blurple(), description=f"Should player {hunter} be added to the hunter list?")
+            class Buttons(discord.ui.View):
+                    @discord.ui.button(label="Yes", style=discord.ButtonStyle.success)
+                    async def button_callback_1(self, button, interaction):
+                        if config.Storage.add_hunter(hunter):
+                            await interaction.response.send_message("Hunter Added!")
+                        else: await interaction.response.send_message("Hunter Already Added!")
+                    @discord.ui.button(label="No", style=discord.ButtonStyle.danger)
+                    async def button_callback_2(self, button, interaction):
+                        await interaction.response.send_message("Hunter Not Added!")
+            await user.send(embed=embed, view=Buttons())
+            await ctx.respond("Hunter will be added pending vertifcation")
 
     @hunters.command(description="Scan nearby players")
     async def nearby(self, ctx: discord.ApplicationContext, town: discord.SlashCommandOptionType.string):
