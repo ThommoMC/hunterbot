@@ -5,10 +5,14 @@ import scanner
 import math
 from discord.ext import tasks
 import playerMan
+import dotenv
+import os
 
 intents = discord.Intents.default()
 intents.members = True
 bot = discord.Bot(intents=intents)
+
+dotenv.load_dotenv(".env")
 
 @bot.event
 async def on_ready():
@@ -59,4 +63,4 @@ async def hunterProtection():
 
 #bot.load_extension('config')
 bot.load_extension('scanner')
-bot.run("MTE1ODY0Mjk5OTA2MDg2NTAyNg.GYnVYf.5JV-pNtnIaLywmCDLGKQwtq8OJ3cE6lXaL2Ltg")
+bot.run(os.getenv("DISCORD_TOKEN"))
